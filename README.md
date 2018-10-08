@@ -8,6 +8,8 @@ the given input.
 To build `wordcounter`, you can just do a normal `go build`.
 
 ```
+go get -u github.com/gorilla/mux
+go get github.com/stretchr/testify
 go build
 ```
 
