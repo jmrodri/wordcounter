@@ -8,12 +8,13 @@ import (
 // CountWordsPerSentence given a list of sentences, return a map whose keys are
 // the sentences and the value is the word count in the sentence
 func CountWordsPerSentence(sentences []string) map[string]int {
-	// result := make(map[string]string)
-	// for sentence := range sentences {
-	//
-	// }
-	//
-	return nil
+	result := make(map[string]int)
+	for _, sentence := range sentences {
+		words := strings.Split(sentence, " ")
+		result[sentence] = len(words)
+	}
+
+	return result
 }
 
 // SplitSentences returns a list of sentences split from a single string. A
