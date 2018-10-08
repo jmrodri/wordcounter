@@ -83,6 +83,8 @@ func (h handler) totalLetterCount(w http.ResponseWriter, r *http.Request) {
 }
 
 // TODO: consider putting this rune sorter in a separate util package
+
+// RuneSlice is an alias for a slice of runes in order to be sorted.
 type RuneSlice []rune
 
 func (r RuneSlice) Len() int {

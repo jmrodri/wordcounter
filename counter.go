@@ -50,6 +50,10 @@ func SplitSentences(sents string) []string {
 	return sentences
 }
 
+// CountCharacters will count the number of characters in the given string.
+// Unlike the CountWordsPerSentence which splits the sentences and keeps track
+// of them, CountCharacters treats it as a big blob of data. CountCharacters
+// returns a map with the given rune (character) and the total count.
 func CountCharacters(sents string) map[rune]int {
 	result := make(map[rune]int)
 	rdr := strings.NewReader(strings.ToUpper(sents))
