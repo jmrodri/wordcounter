@@ -81,3 +81,9 @@ curl \
     -d "$req" \
     "http://localhost:9090/total_letter_count"
 ```
+
+## NOTES
+
+Most times I use a Makefile to build my go projects since they are usually more
+complicated than this particular project. Also, dep is used for dependencies but
+with only 2 external deps I chose not to use that.
