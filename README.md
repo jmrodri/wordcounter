@@ -21,6 +21,36 @@ $ ./wordcounter
 2018/10/08 19:12:04 Listening on http://localhost:9090
 ```
 
+## Unit Testing
+
+You can test the code using `go test`
+
+```
+# QUIET MODE
+$ go test
+PASS
+ok  	github.com/jmrodri/wordcounter	0.003s
+```
+
+```
+# VERBOSE MODE
+$ go test -v
+=== RUN   TestSplitSentences
+--- PASS: TestSplitSentences (0.00s)
+=== RUN   TestCountWordsPerSentence
+--- PASS: TestCountWordsPerSentence (0.00s)
+=== RUN   TestCountCharacters
+--- PASS: TestCountCharacters (0.00s)
+=== RUN   TestNewHandler
+--- PASS: TestNewHandler (0.00s)
+=== RUN   TestWordCounter
+--- PASS: TestWordCounter (0.00s)
+=== RUN   TestLetterCounter
+--- PASS: TestLetterCounter (0.00s)
+PASS
+ok  	github.com/jmrodri/wordcounter	0.003s
+```
+
 ## Testing API
 
 You can connect to the API using `curl`. There are two test scripts in this
