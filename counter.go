@@ -13,6 +13,10 @@ func CountWordsPerSentence(sentences []string) map[string]int {
 	result := make(map[string]int)
 	for _, sentence := range sentences {
 		words := strings.Split(sentence, " ")
+		if len(words) == 1 && words[0] == "" {
+			result[sentence] = 0
+			continue
+		}
 		result[sentence] = len(words)
 	}
 
