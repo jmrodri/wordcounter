@@ -63,3 +63,39 @@ func TestCountWordsPerSentence(t *testing.T) {
 		assert.Equal(t, tc.expected, output)
 	}
 }
+
+func TestCountCharacters(t *testing.T) {
+	testCases := []struct {
+		name     string
+		input    string
+		expected map[rune]int
+	}{
+		{
+			name:  "count characters",
+			input: "This is a test. WE PASSED! Or did we?",
+			expected: map[rune]int{
+				'A': 2,
+				'D': 3,
+				'E': 4,
+				'H': 1,
+				'I': 3,
+				'O': 1,
+				'P': 1,
+				'R': 1,
+				'S': 5,
+				'T': 3,
+				'W': 2,
+			},
+		},
+		{
+			name:     "empty input",
+			input:    "",
+			expected: map[rune]int{},
+		},
+	}
+
+	for _, tc := range testCases {
+		output := CountCharacters(tc.input)
+		assert.EqualValues(t, tc.expected, output)
+	}
+}

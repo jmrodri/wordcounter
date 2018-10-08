@@ -1,8 +1,10 @@
 package main
 
 import (
+	"io"
 	"strings"
 	"text/scanner"
+	"unicode"
 )
 
 // CountWordsPerSentence given a list of sentences, return a map whose keys are
@@ -44,6 +46,17 @@ func SplitSentences(sents string) []string {
 	return sentences
 }
 
-func CountWords(sentence string) int {
-	return 0
+func CountCharacters(sents string) map[rune]int {
+	result := make(map[rune]int)
+	rdr := strings.NewReader(strings.ToUpper(sents))
+	for {
+		if c, _, err := rdr.ReadRune(); err != nil {
+			if err == io.EOF {
+				break
+			}
+		} else if unicode.IsLetter(c) {
+			result[c] = result[c] + 1
+		}
+	}
+	return result
 }
