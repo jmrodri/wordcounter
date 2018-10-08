@@ -24,19 +24,30 @@ func TestWordCounter(t *testing.T) {
 		input   map[string]string
 		expcode int
 		expresp string
+		sendhdr bool
 	}{
 		{
 			name:    "there should be no GET",
 			method:  "GET",
 			expcode: http.StatusNotFound,
 			expresp: "404 page not found\n",
+			sendhdr: true,
 		},
 		{
 			name:    "POST should return something",
 			method:  "POST",
 			input:   map[string]string{"somekey": "sentence1? sentence2."},
 			expcode: http.StatusOK,
-			expresp: "{Hello world}",
+			expresp: "{\"sentence1?\":1,\"sentence2.\":1}\n",
+			sendhdr: true,
+		},
+		{
+			name:    "POST with invalid header should return nothing",
+			method:  "POST",
+			input:   map[string]string{"somekey": "sentence1? sentence2."},
+			expcode: http.StatusBadRequest,
+			expresp: "{}\n",
+			sendhdr: false,
 		},
 	}
 
@@ -46,6 +57,10 @@ func TestWordCounter(t *testing.T) {
 		req, err := http.NewRequest(tc.method, "/word_count_per_sentence", bytes.NewReader(b))
 		if err != nil {
 			t.Fatal(err)
+		}
+
+		if tc.sendhdr {
+			req.Header.Add("Content-Type", "application/json")
 		}
 
 		recorder := httptest.NewRecorder()

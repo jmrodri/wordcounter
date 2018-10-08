@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -32,25 +33,44 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (h handler) wordCountPerSentence(w http.ResponseWriter, r *http.Request) {
 	var req map[string]string
+	resp := make(map[string]int)
 
 	if err := readRequest(r, &req); err != nil {
 		writeResponse(w, http.StatusBadRequest, err)
 		return
 	}
 
-	// count the words per sentence
+	fmt.Printf("going through request now %v\n", req)
 
-	var err error
-	if err != nil {
-		writeResponse(w, http.StatusOK, err)
-		return
-	} else {
-		writeResponse(w, http.StatusOK, "")
-		return
+	// count the words per sentence
+	for _, s := range req {
+		lresp := CountWordsPerSentence(SplitSentences(s))
+		resp = appendToResponse(resp, lresp)
 	}
+
+	writeResponse(w, http.StatusOK, resp)
+
+	/*
+		var err error
+		if err != nil {
+			writeResponse(w, http.StatusOK, err)
+			return
+		} else {
+			writeResponse(w, http.StatusOK, "")
+			return
+		}
+	*/
+
 }
 
 func (h handler) totalLetterCount(w http.ResponseWriter, r *http.Request) {
+}
+
+func appendToResponse(resp, toappend map[string]int) map[string]int {
+	for k, v := range toappend {
+		resp[k] = v
+	}
+	return resp
 }
 
 func readRequest(r *http.Request, obj interface{}) error {
