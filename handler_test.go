@@ -79,28 +79,48 @@ func TestLetterCounter(t *testing.T) {
 	testCases := []struct {
 		name    string
 		method  string
+		input   map[string]string
 		expcode int
 		expresp string
+		sendhdr bool
 	}{
 		{
-			name:    "there should be no GET",
+			name:    "there should be no GET for letter counter",
 			method:  "GET",
 			expcode: http.StatusNotFound,
 			expresp: "404 page not found\n",
+			sendhdr: true,
 		},
 		{
-			name:    "POST should return something",
+			name:    "POST should return something for letter counter",
 			method:  "POST",
+			input:   map[string]string{"somekey": "sentence1? sentence2."},
 			expcode: http.StatusOK,
-			expresp: "{Hello world}",
+			expresp: "\"the text contains 2 Cs, 6 Es, 4 Ns, 2 Ss, 2 Ts, \"\n",
+			sendhdr: true,
+		},
+		{
+			name:    "POST with invalid header should return nothing",
+			method:  "POST",
+			input:   map[string]string{"somekey": "sentence1? sentence2."},
+			expcode: http.StatusBadRequest,
+			expresp: "{}\n",
+			sendhdr: false,
 		},
 	}
 
 	for _, tc := range testCases {
-		req, err := http.NewRequest(tc.method, "/total_letter_count", nil)
+
+		b, _ := json.Marshal(&tc.input)
+		req, err := http.NewRequest(tc.method, "/total_letter_count", bytes.NewReader(b))
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		if tc.sendhdr {
+			req.Header.Add("Content-Type", "application/json")
+		}
+
 		recorder := httptest.NewRecorder()
 		h := NewHandler()
 		h.ServeHTTP(recorder, req)

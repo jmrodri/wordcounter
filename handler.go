@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"sort"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -40,8 +42,6 @@ func (h handler) wordCountPerSentence(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("going through request now %v\n", req)
-
 	// count the words per sentence
 	for _, s := range req {
 		lresp := CountWordsPerSentence(SplitSentences(s))
@@ -49,21 +49,52 @@ func (h handler) wordCountPerSentence(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeResponse(w, http.StatusOK, resp)
-
-	/*
-		var err error
-		if err != nil {
-			writeResponse(w, http.StatusOK, err)
-			return
-		} else {
-			writeResponse(w, http.StatusOK, "")
-			return
-		}
-	*/
-
 }
 
 func (h handler) totalLetterCount(w http.ResponseWriter, r *http.Request) {
+	var req map[string]string
+	resp := "the text contains %s"
+
+	if err := readRequest(r, &req); err != nil {
+		writeResponse(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// count the words per sentence
+	for _, s := range req {
+		counts := CountCharacters(s)
+		var suffix strings.Builder
+
+		var letters []rune
+		for l := range counts {
+			letters = append(letters, l)
+		}
+
+		sort.Sort(RuneSlice(letters))
+
+		for _, l := range letters {
+			suffix.WriteString(fmt.Sprintf("%d %ss, ", counts[l], strings.ToUpper(string(l))))
+		}
+
+		resp = fmt.Sprintf(resp, suffix.String())
+	}
+
+	writeResponse(w, http.StatusOK, resp)
+}
+
+// TODO: consider putting this rune sorter in a separate util package
+type RuneSlice []rune
+
+func (r RuneSlice) Len() int {
+	return len(r)
+}
+
+func (r RuneSlice) Less(i, j int) bool {
+	return r[i] < r[j]
+}
+
+func (r RuneSlice) Swap(i, j int) {
+	r[i], r[j] = r[j], r[i]
 }
 
 func appendToResponse(resp, toappend map[string]int) map[string]int {
