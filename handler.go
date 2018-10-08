@@ -53,7 +53,7 @@ func (h handler) wordCountPerSentence(w http.ResponseWriter, r *http.Request) {
 
 func (h handler) totalLetterCount(w http.ResponseWriter, r *http.Request) {
 	var req map[string]string
-	resp := "the text contains %s"
+	resp := map[string]string{"response": "the text contains %s"}
 
 	if err := readRequest(r, &req); err != nil {
 		writeResponse(w, http.StatusBadRequest, err)
@@ -76,7 +76,7 @@ func (h handler) totalLetterCount(w http.ResponseWriter, r *http.Request) {
 			suffix.WriteString(fmt.Sprintf("%d %ss, ", counts[l], strings.ToUpper(string(l))))
 		}
 
-		resp = fmt.Sprintf(resp, suffix.String())
+		resp["response"] = fmt.Sprintf(resp["response"], suffix.String())
 	}
 
 	writeResponse(w, http.StatusOK, resp)
